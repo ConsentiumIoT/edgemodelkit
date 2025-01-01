@@ -10,19 +10,19 @@ with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = fh.read()
 
 # Define the package version
-VERSION = "0.1.0"  # Initial version for EdgeStream
+VERSION = "0.1.0"  # Initial version for edgestream
 
 # Package description
-DESCRIPTION = "EdgeStream: A Python library for seamless sensor data acquisition and logging."
+DESCRIPTION = "edgestream: A Python library for seamless sensor data acquisition and logging."
 LONG_DESCRIPTION = (
-    "EdgeStream is a Python library developed by EdgeNeuron, designed for efficient sensor data acquisition, "
+    "edgestream is a Python library developed by EdgeNeuron, designed for efficient sensor data acquisition, "
     "real-time processing, and logging. The library integrates with edge devices to streamline data pipelines for "
     "machine learning and IoT applications."
 )
 
 # Define the setup configuration
 setup(
-    name="edgestream",  # Unique package name for EdgeStream
+    name="edgestream",  # Unique package name for edgestream
     version=VERSION,
     author="EdgeNeuron",
     author_email="support@edgeneuron.ai",
@@ -51,11 +51,11 @@ setup(
         "Sensor Data",
         "Data Logging",
         "EdgeNeuron",
-        "EdgeStream",
+        "edgestream",
         "Machine Learning",
     ],
     classifiers=[
-        "Development Status :: 4 - Beta",  # Updated to Beta for EdgeStream
+        "Development Status :: 4 - Beta",  # Updated to Beta for edgestream
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
         "License :: OSI Approved :: MIT License",
