@@ -1,6 +1,6 @@
-# EdgeStream: Sensor Data Acquisition and Logging Library
+# EdgeModelKit: Sensor Data Acquisition and Logging Library
 
-EdgeStream is a Python library developed by **EdgeNeuron**, designed for seamless sensor data acquisition, real-time processing, and efficient logging. This library bridges the gap between IoT devices and data processing pipelines, making it ideal for edge computing and machine learning applications.
+EdgeModelKit is a Python library developed by **EdgeNeuron**, designed for seamless sensor data acquisition, real-time processing, and efficient logging. This library bridges the gap between IoT devices and data processing pipelines, making it ideal for edge computing and machine learning applications.
 
 ---
 
