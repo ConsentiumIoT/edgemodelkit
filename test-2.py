@@ -1,4 +1,4 @@
-from edgestream import DataFetcher
+from edgemodelkit import DataFetcher
 import matplotlib.pyplot as plt
 
 data_fetcher = DataFetcher(serial_port="/dev/cu.usbserial-0001", baud_rate=115200)

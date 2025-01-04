@@ -1,4 +1,4 @@
-from edgestream import DataFetcher
+from edgemodelkit import DataFetcher
 
 # Initialize DataFetcher with the appropriate serial port and baud rate
 data_fetcher = DataFetcher(serial_port="/dev/cu.usbserial-0001", baud_rate=9600)

@@ -16,7 +16,7 @@ EdgeStream is a Python library developed by **EdgeNeuron**, designed for seamles
 ## Installation
 
 ```bash
-pip install edgestream
+pip install edgemodelkit
 ```
 
 ---
@@ -26,7 +26,7 @@ pip install edgestream
 ### 1. Initialize the DataFetcher
 
 ```python
-from edgestream import DataFetcher
+from edgemodelkit import DataFetcher
 
 # Initialize the DataFetcher with your serial port and baud rate
 fetcher = DataFetcher(serial_port="/dev/ttyUSB0", serial_baud=9600)
@@ -56,7 +56,7 @@ fetcher.log_data(samples=10, include_timestamp=True, include_count=True)
 ## Example: Real-Time Data Processing
 
 ```python
-from edgestream import DataFetcher
+from edgemodelkit import DataFetcher
 
 fetcher = DataFetcher(serial_port="/dev/ttyUSB0", serial_baud=9600)
 
