@@ -131,7 +131,7 @@ EdgeModelKit is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## **Support**  
 
-For support and inquiries, contact us at **support@edgeneuron.ai** or visit our [GitHub repository](https://github.com/ConsentiumIoT/edgemodelkit).  
+For support and inquiries, contact us at **support@edgeneuronai.com** or visit our [GitHub repository](https://github.com/ConsentiumIoT/edgemodelkit).  
 
 ---
 
