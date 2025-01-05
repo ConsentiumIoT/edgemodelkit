@@ -10,7 +10,7 @@ with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = fh.read()
 
 # Define the package version
-VERSION = "0.1.0"  # Initial version for edgemodelkit
+VERSION = "0.1.1"  # Initial version for edgemodelkit
 
 # Package description
 DESCRIPTION = "edgemodelkit: A Python library for seamless sensor data acquisition and logging."
@@ -25,11 +25,11 @@ setup(
     name="edgemodelkit",  # Unique package name for edgemodelkit
     version=VERSION,
     author="EdgeNeuron",
-    author_email="support@edgeneuron.ai",
+    author_email="official@consentiumiot.com",
     description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ConsentiumIoT/EdgeStream",  # Repository URL
+    url="https://github.com/ConsentiumIoT/edgemodelkit",  # Repository URL
     packages=find_packages(),  # Automatically discover all packages
     install_requires=[
         "numpy",  # For numerical operations
@@ -69,8 +69,8 @@ setup(
     ],
     python_requires=">=3.7",  # Specify the minimum supported Python version
     project_urls={
-        "Bug Tracker": "https://github.com/EdgeNeuron/edgestream-py/issues",
-        "Documentation": "https://github.com/EdgeNeuron/edgestream-py#readme",
-        "Source Code": "https://github.com/EdgeNeuron/edgestream-py",
+        "Bug Tracker": "https://github.com/ConsentiumIoT/edgemodelkit/issues",
+        "Documentation": "https://github.com/ConsentiumIoT/edgemodelkit#readme",
+        "Source Code": "https://github.com/ConsentiumIoT/edgemodelkit",
     },
 )
