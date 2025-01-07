@@ -1,10 +1,10 @@
-# **EdgeModelKit**: Sensor Data Acquisition and Logging Library  
+# **EdgeModelKit**: Sensor Data Acquisition and Logging Library
 
-EdgeModelKit is a Python library developed by **EdgeNeuron**, designed to simplify sensor data acquisition, logging, and real-time processing for IoT devices. It works seamlessly with the **DataLogger script** from the [EdgeNeuron Arduino library](https://github.com/ConsentiumIoT/EdgeNeuron), making it ideal for edge computing and machine learning applications.  
+EdgeModelKit is a Python library developed by **EdgeNeuron**, designed to simplify sensor data acquisition, logging, and real-time processing for IoT devices. It works seamlessly with the **DataLogger script** from the [EdgeNeuron Arduino library](https://github.com/ConsentiumIoT/EdgeNeuron), making it ideal for edge computing and machine learning applications.
 
 ---
 
-## **Features**  
+## **Features**
 
 - **Serial Communication**: Supports data acquisition over serial ports with robust error handling.  
 - **Flexible Data Fetching**: Retrieve sensor data as Python lists or NumPy arrays.  
@@ -14,9 +14,9 @@ EdgeModelKit is a Python library developed by **EdgeNeuron**, designed to simpli
 
 ---
 
-## **Usage Prerequisites**  
+## **Usage Prerequisites**
 
-This library is designed to work in conjunction with the **DataLogger script** available in the [EdgeNeuron Arduino library](https://github.com/ConsentiumIoT/EdgeNeuron). The DataLogger script configures your Arduino-based IoT device to send structured JSON sensor data over a serial connection.  
+This library is designed to work in conjunction with the **DataLogger script** available in the [EdgeNeuron Arduino library](https://github.com/ConsentiumIoT/EdgeNeuron). The DataLogger script configures your Arduino-based IoT device to send structured JSON sensor data over a serial connection.
 
 Before using EdgeModelKit, ensure:  
 1. Your Arduino device is programmed with the **DataLogger script** from the [EdgeNeuron Arduino library](https://github.com/ConsentiumIoT/EdgeNeuron).  
@@ -24,49 +24,49 @@ Before using EdgeModelKit, ensure:
 
 ---
 
-## **Installation**  
+## **Installation**
 
-Install EdgeModelKit using pip:  
+Install EdgeModelKit using pip:
 
-```bash  
-pip install edgemodelkit  
-```  
-
----
-
-## **Quick Start**  
-
-### **1. Initialize the DataFetcher**  
-
-```python  
-from edgemodelkit import DataFetcher  
-
-# Initialize the DataFetcher with the desired serial port and baud rate  
-fetcher = DataFetcher(serial_port="COM3", baud_rate=9600)  
-```  
-
-### **2. Fetch Sensor Data**  
-
-```python  
-# Fetch data as a Python list  
-sensor_data = fetcher.fetch_data(return_as_numpy=False)  
-print("Sensor Data:", sensor_data)  
-
-# Fetch data as a NumPy array  
-sensor_data_numpy = fetcher.fetch_data(return_as_numpy=True)  
-print("Sensor Data (NumPy):", sensor_data_numpy)  
-```  
-
-### **3. Log Sensor Data**  
-
-```python  
-# Log 10 samples to a CSV file with timestamp and count columns  
-fetcher.log_sensor_data(class_label="ClassA", num_samples=10, add_timestamp=True, add_count=True)  
-```  
+```bash
+pip install edgemodelkit
+```
 
 ---
 
-## **CSV Logging Details**  
+## **Quick Start**
+
+### **1. Initialize the DataFetcher**
+
+```python
+from edgemodelkit import DataFetcher
+
+# Initialize the DataFetcher with the desired serial port and baud rate
+fetcher = DataFetcher(serial_port="COM3", baud_rate=9600)
+```
+
+### **2. Fetch Sensor Data**
+
+```python
+# Fetch data as a Python list
+sensor_data = fetcher.fetch_data(return_as_numpy=False)
+print("Sensor Data:", sensor_data)
+
+# Fetch data as a NumPy array
+sensor_data_numpy = fetcher.fetch_data(return_as_numpy=True)
+print("Sensor Data (NumPy):", sensor_data_numpy)
+```
+
+### **3. Log Sensor Data**
+
+```python
+# Log 10 samples to a CSV file with timestamp and count columns
+fetcher.log_sensor_data(class_label="ClassA", num_samples=10, add_timestamp=True, add_count=True)
+```
+
+---
+
+## **CSV Logging Details**
 
 The CSV file is generated automatically based on the sensor name (e.g., `TemperatureSensor_data_log.csv`) and contains the following:  
 
@@ -78,65 +78,123 @@ The data is saved under a folder named `Dataset`, with subfolders organized by `
 
 ---
 
-## **Real-Time Data Processing Example**  
+## **Real-Time Data Processing Example**
 
-```python  
-from edgemodelkit import DataFetcher  
+```python
+from edgemodelkit import DataFetcher
 
-fetcher = DataFetcher(serial_port="COM3", baud_rate=9600)  
+fetcher = DataFetcher(serial_port="COM3", baud_rate=9600)
 
-try:  
-    while True:  
-        # Fetch data as NumPy array  
-        sensor_data = fetcher.fetch_data(return_as_numpy=True)  
-        print("Received Data:", sensor_data)  
+try:
+    while True:
+        # Fetch data as NumPy array
+        sensor_data = fetcher.fetch_data(return_as_numpy=True)
+        print("Received Data:", sensor_data)
 
-        # Perform custom processing (e.g., feed to a TensorFlow model)  
-        # prediction = model.predict(sensor_data)  
-        # print("Prediction:", prediction)  
-finally:  
-    fetcher.close_connection()  
-```  
+        # Perform custom processing (e.g., feed to a TensorFlow model)
+        # prediction = model.predict(sensor_data)
+        # print("Prediction:", prediction)
+finally:
+    fetcher.close_connection()
+```
 
 ---
 
-## **Dependencies**  
+## **Using ModelPlayGround**
 
-EdgeModelKit requires the following Python packages:  
+### **1. Initialize the ModelPlayGround**
+
+```python
+from edgemodelkit import ModelPlayGround
+
+# Initialize the ModelPlayGround with the path to your .keras model
+playground = ModelPlayGround(model_path="path_to_your_model.keras")
+```
+
+### **2. View Model Summary**
+
+```python
+# Display the model architecture
+playground.model_summary()
+```
+
+### **3. View Model Statistics**
+
+```python
+# View model size and number of parameters
+playground.model_stats()
+```
+
+### **4. Convert Model to TensorFlow Lite**
+
+```python
+# Convert the model to TFLite format with default quantization
+playground.model_converter(quantization_type="default")
+
+# Convert the model to TFLite format with float16 quantization
+playground.model_converter(quantization_type="float16")
+
+# Convert the model to TFLite format with int8 quantization
+playground.model_converter(quantization_type="int8")
+```
+
+### **5. Test TFLite Model on Live Data**
+
+```python
+from edgemodelkit import DataFetcher
+
+# Initialize a DataFetcher
+fetcher = DataFetcher(serial_port="COM3", baud_rate=9600)
+
+# Perform live testing of the TFLite model
+prediction = playground.edge_testing(tflite_model_path="path_to_tflite_model.tflite", data_fetcher=fetcher)
+print("Model Prediction:", prediction)
+```
+
+---
+
+## **Dependencies**
+
+EdgeModelKit requires the following Python packages:
 
 - `numpy`  
 - `pandas`  
 - `pyserial`  
 - `json`  
 
-Install dependencies with:  
+Install dependencies with:
 
-```bash  
-pip install numpy pandas pyserial json  
-```  
-
----
-
-## **Contributing**  
-
-We welcome contributions to EdgeModelKit! Feel free to submit bug reports, feature requests, or pull requests on our [GitHub repository](https://github.com/ConsentiumIoT/edgemodelkit).  
+```bash
+pip install numpy pandas pyserial json
+```
 
 ---
 
-## **License**  
+## **Disclaimer**
 
-EdgeModelKit is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.  
-
----
-
-## **Support**  
-
-For support and inquiries, contact us at **support@edgeneuronai.com** or visit our [GitHub repository](https://github.com/ConsentiumIoT/edgemodelkit).  
+Currently, the `ModelPlayGround` class supports only `.keras` models for conversion and testing. Support for other model formats may be added in future updates.
 
 ---
 
-## **About EdgeNeuron**  
+## **Contributing**
 
-EdgeNeuron is a pioneer in edge computing solutions, enabling developers to build intelligent IoT applications with state-of-the-art tools and libraries. Learn more at [edgeneuronai.com](https://edgeneuronai.com).  
+We welcome contributions to EdgeModelKit! Feel free to submit bug reports, feature requests, or pull requests on our [GitHub repository](https://github.com/ConsentiumIoT/edgemodelkit).
 
 ---
+
+## **License**
+
+EdgeModelKit is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## **Support**
+
+For support and inquiries, contact us at **support@edgeneuronai.com** or visit our [GitHub repository](https://github.com/ConsentiumIoT/edgemodelkit).
+
+---
+
+## **About EdgeNeuron**
+
+EdgeNeuron is a pioneer in edge computing solutions, enabling developers to build intelligent IoT applications with state-of-the-art tools and libraries. Learn more at [edgeneuronai.com](https://edgeneuronai.com).
+
