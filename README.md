@@ -153,23 +153,6 @@ print("Model Prediction:", prediction)
 
 ---
 
-## **Dependencies**
-
-EdgeModelKit requires the following Python packages:
-
-- `numpy`  
-- `pandas`  
-- `pyserial`  
-- `json`  
-
-Install dependencies with:
-
-```bash
-pip install numpy pandas pyserial json
-```
-
----
-
 ## **Disclaimer**
 
 Currently, the `ModelPlayGround` class supports only `.keras` models for conversion and testing. Support for other model formats may be added in future updates.
