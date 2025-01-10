@@ -152,12 +152,11 @@ class ModelPlayGround:
                 sensor_data = preprocess_func(sensor_data)
 
             # Ensure the input shape matches the model's expected input
-            input_data = np.expand_dims(sensor_data, axis=0).astype(input_details[0]['dtype'])
+            input_data = sensor_data.astype(input_details[0]['dtype'])
 
             interpreter.set_tensor(input_details[0]['index'], input_data)
             interpreter.invoke()
             prediction = interpreter.get_tensor(output_details[0]['index'])
-            print(f"Prediction: {prediction}")
             return prediction
 
 
