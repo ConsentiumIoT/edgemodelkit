@@ -117,7 +117,8 @@ finally:
 from edgemodelkit import ModelPlayGround
 
 # Initialize the ModelPlayGround with the path to your .keras model
-playground = ModelPlayGround(model_path="path_to_your_model.keras")
+playground = ModelPlayGround()
+playground.load_model(model_path="path_to_your_model.keras")
 ```
 
 ### **2. View Model Summary**
