@@ -161,12 +161,13 @@ def custom_preprocess(data):
     return (data - min(data)) / (max(data) - min(data))
 
 # Perform live testing of the TFLite model
-prediction = playground.edge_testing(
+playground_output = playground.edge_testing(
     tflite_model_path="path_to_tflite_model.tflite",
     data_fetcher=fetcher,
     preprocess_func=custom_preprocess
 )
-print("Model Prediction:", prediction)
+print("Model Prediction: ", playground_output['ModelOutput'])
+print("Sensor data: ", playground_output['SensorData'])
 ```
 
 ---
