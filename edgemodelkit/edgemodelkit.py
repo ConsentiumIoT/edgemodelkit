@@ -72,7 +72,11 @@ class DataFetcher:
         print(f"Data saved to {output_file_name}")
 
 class ModelPlayGround:
-    def __init__(self, model_path: str):
+    def __init__(self):
+        self.loaded_model = None
+        self.model_path = None
+
+    def load_model(self, model_path: str):
         self.model_path = model_path
         self.loaded_model = tf.keras.models.load_model(self.model_path)
 
@@ -131,7 +135,7 @@ class ModelPlayGround:
             tflite_model = converter.convert()
             save_tflite_model(tflite_model, "int8")
 
-    def edge_testing(self, tflite_model_path, data_fetcher):
+    def edge_testing(self, tflite_model_path, data_fetcher, preprocess_func=None):
         interpreter = tf.lite.Interpreter(model_path=tflite_model_path)
         interpreter.allocate_tensors()
         input_details = interpreter.get_input_details()
@@ -142,9 +146,18 @@ class ModelPlayGround:
             sensor_data = data_fetcher.fetch_data(return_as_numpy=True)
             if sensor_data.size == 0:
                 continue
+
+            # Apply preprocessing if a function is provided
+            if preprocess_func:
+                sensor_data = preprocess_func(sensor_data)
+
+            # Ensure the input shape matches the model's expected input
             input_data = np.expand_dims(sensor_data, axis=0).astype(input_details[0]['dtype'])
+
             interpreter.set_tensor(input_details[0]['index'], input_data)
             interpreter.invoke()
             prediction = interpreter.get_tensor(output_details[0]['index'])
+            print(f"Prediction: {prediction}")
             return prediction
+
 

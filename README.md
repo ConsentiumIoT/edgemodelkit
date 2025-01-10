@@ -10,6 +10,7 @@ EdgeModelKit is a Python library developed by **EdgeNeuron**, designed to simpli
 - **Flexible Data Fetching**: Retrieve sensor data as Python lists or NumPy arrays.  
 - **Customizable Logging**: Log sensor data into CSV files with optional timestamps and counters.  
 - **Class-Based Organization**: Log data with class labels to prepare datasets for machine learning tasks.  
+- **Custom Preprocessing**: Apply custom preprocessing functions to sensor data before logging or inference.  
 - **Error Handling**: Gracefully handles data decoding errors and missing keys in sensor data packets.  
 
 ---
@@ -85,14 +86,22 @@ from edgemodelkit import DataFetcher
 
 fetcher = DataFetcher(serial_port="COM3", baud_rate=9600)
 
+def custom_preprocess(data):
+    # Example: Normalize the data
+    return (data - min(data)) / (max(data) - min(data))
+
 try:
     while True:
         # Fetch data as NumPy array
         sensor_data = fetcher.fetch_data(return_as_numpy=True)
-        print("Received Data:", sensor_data)
+        print("Received Data (Raw):", sensor_data)
+
+        # Apply custom preprocessing
+        processed_data = custom_preprocess(sensor_data)
+        print("Preprocessed Data:", processed_data)
 
         # Perform custom processing (e.g., feed to a TensorFlow model)
-        # prediction = model.predict(sensor_data)
+        # prediction = model.predict(processed_data)
         # print("Prediction:", prediction)
 finally:
     fetcher.close_connection()
@@ -146,8 +155,16 @@ from edgemodelkit import DataFetcher
 # Initialize a DataFetcher
 fetcher = DataFetcher(serial_port="COM3", baud_rate=9600)
 
+def custom_preprocess(data):
+    # Example: Normalize the data
+    return (data - min(data)) / (max(data) - min(data))
+
 # Perform live testing of the TFLite model
-prediction = playground.edge_testing(tflite_model_path="path_to_tflite_model.tflite", data_fetcher=fetcher)
+prediction = playground.edge_testing(
+    tflite_model_path="path_to_tflite_model.tflite",
+    data_fetcher=fetcher,
+    preprocess_func=custom_preprocess
+)
 print("Model Prediction:", prediction)
 ```
 
