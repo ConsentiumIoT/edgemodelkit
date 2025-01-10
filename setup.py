@@ -10,7 +10,7 @@ with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = fh.read()
 
 # Define the package version
-VERSION = "1.1.3"  # Initial version for edgemodelkit
+VERSION = "1.1.4"  # Initial version for edgemodelkit
 
 # Package description
 DESCRIPTION = "edgemodelkit: A Python library for seamless sensor data acquisition and logging."
