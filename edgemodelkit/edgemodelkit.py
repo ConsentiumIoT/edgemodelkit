@@ -73,6 +73,9 @@ class DataFetcher:
 
 class ModelPlayGround:
     def __init__(self):
+        self.output_details = None
+        self.input_details = None
+        self.interpreter = None
         self.loaded_model = None
         self.model_path = None
 
@@ -135,28 +138,48 @@ class ModelPlayGround:
             tflite_model = converter.convert()
             save_tflite_model(tflite_model, "int8")
 
-    def edge_testing(self, tflite_model_path, data_fetcher, preprocess_func=None):
-        interpreter = tf.lite.Interpreter(model_path=tflite_model_path)
-        interpreter.allocate_tensors()
-        input_details = interpreter.get_input_details()
-        output_details = interpreter.get_output_details()
+    def set_edge_model(self, tflite_model_path):
+        self.interpreter = tf.lite.Interpreter(model_path=tflite_model_path)
+        self.interpreter.allocate_tensors()
+        self.input_details = self.interpreter.get_input_details()
+        self.output_details = self.interpreter.get_output_details()
 
-        print("Starting live data testing...")
-        while True:
-            sensor_data = data_fetcher.fetch_data(return_as_numpy=True)
-            if sensor_data.size == 0:
-                continue
+    def edge_testing(self, data_fetcher, preprocess_func=None, debug=False):
+        if not hasattr(self, 'interpreter'):
+            raise ValueError("Edge model not set. Call `set_edge_model` first.")
 
-            # Apply preprocessing if a function is provided
-            if preprocess_func:
-                sensor_data = preprocess_func(sensor_data)
+        sensor_data = data_fetcher.fetch_data(return_as_numpy=True)
+        if sensor_data.size == 0:
+            if debug:
+                print("No sensor data received.")
+            return None
 
-            # Ensure the input shape matches the model's expected input
-            input_data = sensor_data.astype(input_details[0]['dtype'])
+        # Apply preprocessing if a function is provided
+        if preprocess_func:
+            sensor_data = preprocess_func(sensor_data)
 
-            interpreter.set_tensor(input_details[0]['index'], input_data)
-            interpreter.invoke()
-            prediction = interpreter.get_tensor(output_details[0]['index'])
-            return prediction
+        # Ensure the input shape matches the model's expected input
+        input_shape = self.input_details[0]['shape']
+        input_data = sensor_data.astype(self.input_details[0]['dtype'])
+
+        if debug:
+            print(f"Expected shape is: {input_shape}, provided shape is: {sensor_data.shape}")
+
+        # Set input tensor
+        self.interpreter.set_tensor(self.input_details[0]['index'], input_data)
+
+        # Perform inference
+        start_time = time.perf_counter()
+        self.interpreter.invoke()
+        stop_time = time.perf_counter()
+
+        if debug:
+            print(f"Inference time: {stop_time - start_time:.6f} seconds")
+
+        # Get prediction
+        prediction = self.interpreter.get_tensor(self.output_details[0]['index'])
+
+        return {"SensorData": input_data, "ModelOutput": prediction}
+
 
 
