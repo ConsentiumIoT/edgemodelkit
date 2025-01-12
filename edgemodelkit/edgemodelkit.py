@@ -75,19 +75,34 @@ def load_scaler(scaler_file):
     scaler = joblib.load(scaler_file)
     return scaler.mean_.tolist(), scaler.scale_.tolist()
 
+
 def convert_tflite_to_c_array(tflite_file):
     with open(tflite_file, 'rb') as f:
         tflite_data = f.read()
 
     tflite_length = len(tflite_data)
-    c_array = [f'0x{byte:02X}' for byte in tflite_data]
 
-    return ", ".join(c_array), tflite_length
+    # Convert binary data to a formatted C array
+    hex_lines = [', '.join([f'0x{byte:02x}' for byte in tflite_data[i:i + 12]])
+                 for i in range(0, len(tflite_data), 12)]
+
+    # Ensure consistent indentation by joining lines
+    formatted_c_array = ',\n    '.join(hex_lines)
+
+    return formatted_c_array, tflite_length
+
+
+def format_scaler_with_new_lines(data, values_per_line=5):
+    # Split the data into chunks of specified size
+    lines = [', '.join([str(x) for x in data[i:i + values_per_line]])
+             for i in range(0, len(data), values_per_line)]
+    # Join the chunks with newline
+    return ',\n    '.join(lines)
 
 def append_to_model_h(model_header_file, scaler_mean, scaler_scale, tflite_array, tflite_length):
     model_h_file_name = os.path.splitext(os.path.basename(model_header_file))[0]
-    scaler_mean_str = ', '.join([str(x) for x in scaler_mean])
-    scaler_scale_str = ', '.join([str(x) for x in scaler_scale])
+    scaler_mean_str = format_scaler_with_new_lines(scaler_mean, values_per_line=5)
+    scaler_scale_str = format_scaler_with_new_lines(scaler_scale, values_per_line=5)
 
     # Prepare the content for model.h
     model_h_content = f"""/*
@@ -103,8 +118,8 @@ def append_to_model_h(model_header_file, scaler_mean, scaler_scale, tflite_array
  * edge device to enable real-time inference with the EdgeNeuron framework.
  */
 
-#ifndef EDGENEURON_MODEL_H
-#define EDGENEURON_MODEL_H
+#ifndef EDGE_NEURON_MODEL_H
+#define EDGE_NEURON_MODEL_H
 
 // TFLite Model Data
 // -----------------------------
@@ -127,6 +142,7 @@ const float scaler_mean[] = {{
 const float scaler_scale[] = {{
     {scaler_scale_str}
 }};
+#endif  // EDGE_NEURON_MODEL_H
 """
 
     # Write the content to model.h
@@ -276,14 +292,19 @@ class ModelPlayGround:
 
         return {"SensorData": input_data, "ModelOutput": prediction}
 
-    def deploy_model(self):
+    def deploy_model(self, scaler_used):
         output_dir = "saved-model/tflm-models"
         ensure_directory_exists(output_dir)
 
         tflite_array, tflite_length = convert_tflite_to_c_array(self.tflite_model_path)
 
         # Save the header file
-        model_name = os.path.splitext(os.path.basename(self.tflite_model_path))[0]
-        header_file = os.path.join(output_dir, f"{model_name}.h")
-        append_to_model_h(header_file, self.scaler_mean, self.scaler_scale, tflite_array, tflite_length)
+        # model_name = os.path.splitext(os.path.basename(self.tflite_model_path))[0]
+        header_file = os.path.join(output_dir, "edge_neuron_model.h")
+        if scaler_used:
+            scaler_mean = scaler_used.mean_.tolist()
+            scaler_scale = scaler_used.scale_.tolist()
+            append_to_model_h(header_file, scaler_mean, scaler_scale, tflite_array, tflite_length)
+        else:
+            append_to_model_h(header_file, self.scaler_mean, self.scaler_scale, tflite_array, tflite_length)
         print(f"TFLM model exported to: {header_file}")
