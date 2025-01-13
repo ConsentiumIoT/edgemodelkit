@@ -10,7 +10,7 @@ with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
     long_description = fh.read()
 
 # Define the package version
-VERSION = "1.1.6"  # Initial version for edgemodelkit
+VERSION = "1.1.7"  # Initial version for edgemodelkit
 
 # Package description
 DESCRIPTION = "edgemodelkit: A Python library for seamless sensor data acquisition and logging."
@@ -36,7 +36,8 @@ setup(
         "pandas",  # For data logging and manipulation
         "pyserial",  # For serial port communication
         "tensorflow",  # If required for ML integrations
-        "tqdm"          # For progress bar
+        "tqdm",          # For progress bar
+        "joblib"        # For pickle file
     ],
     extras_require={
         "dev": [
