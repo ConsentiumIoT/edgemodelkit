@@ -99,10 +99,29 @@ def _format_scaler_with_new_lines(data, values_per_line=5):
     # Join the chunks with newline
     return ',\n    '.join(lines)
 
+
 def _append_to_model_h(model_header_file, scaler_mean, scaler_scale, tflite_array, tflite_length):
     model_h_file_name = os.path.splitext(os.path.basename(model_header_file))[0]
-    scaler_mean_str = _format_scaler_with_new_lines(scaler_mean, values_per_line=5)
-    scaler_scale_str = _format_scaler_with_new_lines(scaler_scale, values_per_line=5)
+
+    # Prepare the scaler data if available
+    scaler_section = ""
+    if scaler_mean is not None and scaler_scale is not None:
+        scaler_mean_str = _format_scaler_with_new_lines(scaler_mean, values_per_line=5)
+        scaler_scale_str = _format_scaler_with_new_lines(scaler_scale, values_per_line=5)
+
+        scaler_section = f"""
+// Scaler Data
+// -----------------------------
+// Mean and scale values extracted from scaler.pkl
+// These are used for preprocessing input data before inference.
+const float scaler_mean[] = {{
+    {scaler_mean_str}
+}};
+
+const float scaler_scale[] = {{
+    {scaler_scale_str}
+}};
+"""
 
     # Prepare the content for model.h
     model_h_content = f"""/*
@@ -112,7 +131,7 @@ def _append_to_model_h(model_header_file, scaler_mean, scaler_scale, tflite_arra
  * a platform specializing in TinyML for edge devices.
  *
  * It contains both the TensorFlow Lite (TFLite) model data
- * and the scaler details for preprocessing.
+ * and the scaler details for preprocessing (if available).
  *
  * Usage: Deploy this header file on your microcontroller or
  * edge device to enable real-time inference with the EdgeNeuron framework.
@@ -131,17 +150,8 @@ unsigned char {model_h_file_name}[] = {{
 }};
 unsigned int {model_h_file_name}_len = {tflite_length};
 
-// Scaler Data
-// -----------------------------
-// Mean and scale values extracted from scaler.pkl
-// These are used for preprocessing input data before inference.
-const float scaler_mean[] = {{
-    {scaler_mean_str}
-}};
+{scaler_section}
 
-const float scaler_scale[] = {{
-    {scaler_scale_str}
-}};
 #endif  // EDGE_NEURON_MODEL_H
 """
 
