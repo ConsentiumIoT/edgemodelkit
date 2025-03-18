@@ -1,8 +1,8 @@
 import os
-import serial
 import time
 import json
 import tqdm
+import serial
 import joblib
 import numpy as np
 import pandas as pd
@@ -76,7 +76,7 @@ def load_scaler(scaler_file):
     return scaler.mean_.tolist(), scaler.scale_.tolist()
 
 
-def convert_tflite_to_c_array(tflite_file):
+def _convert_tflite_to_c_array(tflite_file):
     with open(tflite_file, 'rb') as f:
         tflite_data = f.read()
 
@@ -92,17 +92,17 @@ def convert_tflite_to_c_array(tflite_file):
     return formatted_c_array, tflite_length
 
 
-def format_scaler_with_new_lines(data, values_per_line=5):
+def _format_scaler_with_new_lines(data, values_per_line=5):
     # Split the data into chunks of specified size
     lines = [', '.join([str(x) for x in data[i:i + values_per_line]])
              for i in range(0, len(data), values_per_line)]
     # Join the chunks with newline
     return ',\n    '.join(lines)
 
-def append_to_model_h(model_header_file, scaler_mean, scaler_scale, tflite_array, tflite_length):
+def _append_to_model_h(model_header_file, scaler_mean, scaler_scale, tflite_array, tflite_length):
     model_h_file_name = os.path.splitext(os.path.basename(model_header_file))[0]
-    scaler_mean_str = format_scaler_with_new_lines(scaler_mean, values_per_line=5)
-    scaler_scale_str = format_scaler_with_new_lines(scaler_scale, values_per_line=5)
+    scaler_mean_str = _format_scaler_with_new_lines(scaler_mean, values_per_line=5)
+    scaler_scale_str = _format_scaler_with_new_lines(scaler_scale, values_per_line=5)
 
     # Prepare the content for model.h
     model_h_content = f"""/*
@@ -292,11 +292,11 @@ class ModelPlayGround:
 
         return {"SensorData": input_data, "ModelOutput": prediction}
 
-    def deploy_model(self, scaler_used):
+    def export_model(self, scaler_used=None):
         output_dir = "saved-model/tflm-models"
         ensure_directory_exists(output_dir)
 
-        tflite_array, tflite_length = convert_tflite_to_c_array(self.tflite_model_path)
+        tflite_array, tflite_length = _convert_tflite_to_c_array(self.tflite_model_path)
 
         # Save the header file
         # model_name = os.path.splitext(os.path.basename(self.tflite_model_path))[0]
@@ -304,7 +304,7 @@ class ModelPlayGround:
         if scaler_used:
             scaler_mean = scaler_used.mean_.tolist()
             scaler_scale = scaler_used.scale_.tolist()
-            append_to_model_h(header_file, scaler_mean, scaler_scale, tflite_array, tflite_length)
+            _append_to_model_h(header_file, scaler_mean, scaler_scale, tflite_array, tflite_length)
         else:
-            append_to_model_h(header_file, self.scaler_mean, self.scaler_scale, tflite_array, tflite_length)
+            _append_to_model_h(header_file, self.scaler_mean, self.scaler_scale, tflite_array, tflite_length)
         print(f"TFLM model exported to: {header_file}")

@@ -162,6 +162,27 @@ def custom_preprocess(data):
 
 # Perform live testing of the TFLite model
 playground_output = playground.edge_testing(
+    data_fetcher=fetcher,
+    preprocess_func=custom_preprocess
+)
+print("Model Prediction: ", playground_output['ModelOutput'])
+print("Sensor data: ", playground_output['SensorData'])
+```
+
+### **6. Export the TFLM model**
+
+```python
+from edgemodelkit import DataFetcher
+
+# Initialize a DataFetcher
+fetcher = DataFetcher(serial_port="COM3", baud_rate=9600)
+
+def custom_preprocess(data):
+    # Example: Normalize the data
+    return (data - min(data)) / (max(data) - min(data))
+
+# Perform live testing of the TFLite model
+playground_output = playground.edge_testing(
     tflite_model_path="path_to_tflite_model.tflite",
     data_fetcher=fetcher,
     preprocess_func=custom_preprocess
